@@ -1,1 +1,4 @@
-# restaurant_api
+## Как запустить  
+1. Выполните команду `poetry shell`
+2. Выполните команду `uvicorn app.main:app --port 9000 --reload`
+3. Откройте браузер по адресу `http://127.0.0.1:9000`
