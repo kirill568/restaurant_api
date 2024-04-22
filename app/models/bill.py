@@ -9,4 +9,4 @@ class Bill(BaseModel):
     dish_id = Column(Integer, ForeignKey("dish.id"))
 
     order = relationship("Order", back_populates="bills")
-    dish = relationship("dish", back_populates="bills")
+    dish = relationship("Dish", back_populates="bills")

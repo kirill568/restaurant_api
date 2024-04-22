@@ -9,6 +9,5 @@ class Product(BaseModel):
     type_of_product_id = Column(Integer, ForeignKey("type_of_product.id"))
 
     type_of_product = relationship("Type_of_product", back_populates="products")
-
     composition_of_dishes = relationship("Composition_of_dish", cascade="all, delete-orphan", lazy="selectin")
 

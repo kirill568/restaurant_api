@@ -9,5 +9,4 @@ class Order(BaseModel):
     date = Column(DateTime, index=True, nullable=False)
 
     client = relationship("Client", back_populates="orders")
-
     bills = relationship("Bill", cascade="all, delete-orphan", lazy="selectin")
