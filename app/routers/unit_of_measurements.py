@@ -39,7 +39,7 @@ async def create_unit_of_measurement(unit_of_measurement: Create_unit_of_measure
     return JSONResponse(content={"id": unit_of_measurement.id})
 
 @router.put("/{id}", responses={status.HTTP_200_OK: {"model": Message}, status.HTTP_404_NOT_FOUND: {"model": Message}})
-async def update_driver(id: int, unit_of_measurement: Update_unit_of_measurement_schema, db: AsyncSession = Depends(get_db)):
+async def update_product_type(id: int, unit_of_measurement: Update_unit_of_measurement_schema, db: AsyncSession = Depends(get_db)):
     unit_of_measurement: Unit_of_measurement = await crud.update(Unit_of_measurement, unit_of_measurement, id, db)
     if unit_of_measurement == None:
         return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content={"message": "Unit of measurement not found"})
@@ -47,7 +47,7 @@ async def update_driver(id: int, unit_of_measurement: Update_unit_of_measurement
     return JSONResponse(status_code=status.HTTP_200_OK, content={"message": "Unit of measurement successfully updated"})
 
 @router.delete("/{id}", responses={status.HTTP_200_OK: {"model": Message}, status.HTTP_404_NOT_FOUND: {"model": Message}})
-async def remove_driver(id: int, db: AsyncSession = Depends(get_db)):
+async def remove_product_type(id: int, db: AsyncSession = Depends(get_db)):
     unit_of_measurement: Unit_of_measurement = await crud.get_by_id(Unit_of_measurement, id, db)
     if unit_of_measurement == None:
         return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content={"message": "Unit of measurement not found"})
