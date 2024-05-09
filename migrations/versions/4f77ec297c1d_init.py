@@ -81,14 +81,14 @@ def upgrade() -> None:
     op.create_index(op.f('ix_order_date'), 'order', ['date'], unique=False)
     op.create_index(op.f('ix_order_id'), 'order', ['id'], unique=False)
     op.create_table('product',
-    sa.Column('name_of_product', sa.String(length=30), nullable=False),
+    sa.Column('name', sa.String(length=30), nullable=False),
     sa.Column('type_of_product_id', sa.Integer(), nullable=True),
     sa.Column('id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['type_of_product_id'], ['type_of_product.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_product_id'), 'product', ['id'], unique=False)
-    op.create_index(op.f('ix_product_name_of_product'), 'product', ['name_of_product'], unique=False)
+    op.create_index(op.f('ix_product_name'), 'product', ['name'], unique=False)
     op.create_table('bill',
     sa.Column('order_id', sa.Integer(), nullable=True),
     sa.Column('dish_id', sa.Integer(), nullable=True),
@@ -121,7 +121,7 @@ def downgrade() -> None:
     op.drop_table('composition_of_dish')
     op.drop_index(op.f('ix_bill_id'), table_name='bill')
     op.drop_table('bill')
-    op.drop_index(op.f('ix_product_name_of_product'), table_name='product')
+    op.drop_index(op.f('ix_product_name'), table_name='product')
     op.drop_index(op.f('ix_product_id'), table_name='product')
     op.drop_table('product')
     op.drop_index(op.f('ix_order_id'), table_name='order')
