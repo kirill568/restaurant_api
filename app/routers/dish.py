@@ -17,16 +17,16 @@ from app.schemas.responses.message import Message
 from app.repository import crud
 
 router = APIRouter(
-    prefix="/dish", 
+    prefix="", 
     tags=["dish"]
 )
 
-@router.get("", response_model=Union[List[Dish_schema], None])
+@router.get("/dishes", response_model=Union[List[Dish_schema], None])
 async def get_dishes(db: AsyncSession = Depends(get_db)):
     all_items: List[Dish] = await crud.get_all(Dish, db)
     return all_items
 
-@router.get("/{id}", response_model=Dish_schema, responses={status.HTTP_404_NOT_FOUND: {"model": Message}})
+@router.get("/dish/{id}", response_model=Dish_schema, responses={status.HTTP_404_NOT_FOUND: {"model": Message}})
 async def get_dish(id: int, db: AsyncSession = Depends(get_db)):
     item = await crud.get_by_id(Dish, id, db)
     if item == None:
@@ -34,7 +34,7 @@ async def get_dish(id: int, db: AsyncSession = Depends(get_db)):
     
     return item
 
-@router.post("", response_model=Entity_created)
+@router.post("/dish", response_model=Entity_created)
 async def create_dish(item: Create_dish_schema, db: AsyncSession = Depends(get_db)):
     dish_type: Type_of_dish = await crud.get_by_id(Type_of_dish, item.type_of_dish_id, db)
     if dish_type is None:
@@ -43,7 +43,7 @@ async def create_dish(item: Create_dish_schema, db: AsyncSession = Depends(get_d
     item = await crud.create(Dish, item, db)
     return JSONResponse(content={"id": item.id})
 
-@router.put("/{id}", responses={status.HTTP_200_OK: {"model": Message}, status.HTTP_404_NOT_FOUND: {"model": Message}})
+@router.put("/dish/{id}", responses={status.HTTP_200_OK: {"model": Message}, status.HTTP_404_NOT_FOUND: {"model": Message}})
 async def update_dish(id: int, item: Update_dish_schema, db: AsyncSession = Depends(get_db)):
     dish_type: Type_of_dish = await crud.get_by_id(Type_of_dish, item.type_of_dish_id, db)
     if dish_type is None:
@@ -55,8 +55,8 @@ async def update_dish(id: int, item: Update_dish_schema, db: AsyncSession = Depe
 
     return JSONResponse(status_code=status.HTTP_200_OK, content={"message": "Dish successfully updated"})
 
-@router.delete("/{id}", responses={status.HTTP_200_OK: {"model": Message}, status.HTTP_404_NOT_FOUND: {"model": Message}})
-async def remove_dish_type(id: int, db: AsyncSession = Depends(get_db)):
+@router.delete("/dish/{id}", responses={status.HTTP_200_OK: {"model": Message}, status.HTTP_404_NOT_FOUND: {"model": Message}})
+async def remove_dish(id: int, db: AsyncSession = Depends(get_db)):
     item: Dish = await crud.get_by_id(Dish, id, db)
     if item == None:
         return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content={"message": "Dish not found"})
