@@ -6,7 +6,7 @@ class Bill(BaseModel):
     __tablename__ = "bill"
 
     order_id = Column(Integer, ForeignKey("order.id"))
-    dish_id = Column(Integer, ForeignKey("dish.id"))
+    dish_id = Column(Integer, ForeignKey("dish.id", ondelete='CASCADE'))
 
     order = relationship("Order", back_populates="bills")
     dish = relationship("Dish", back_populates="bills")
