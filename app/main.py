@@ -12,6 +12,7 @@ from app.routers import product
 from app.routers import dish_type
 from app.routers import dish
 from app.routers import composition_of_dish
+from app.routers import client
 
 db_manager.init(POSTGRES_DATABASE_URL)
 
@@ -23,3 +24,4 @@ app.include_router(product.router)
 app.include_router(dish_type.router)
 app.include_router(dish.router)
 app.include_router(composition_of_dish.router)
+app.include_router(client.router)
