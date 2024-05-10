@@ -72,7 +72,7 @@ async def get_order(id: int, db: AsyncSession = Depends(get_db)):
     result = {}
     result["id"] = order.id
     result["client_id"] = order.client_id
-    result["timestamp"] = order.date
+    result["timestamp"] = datetime.timestamp(order.date)
 
     bills: List[Bill] = await bill_repository.get_bills_for_order(order.id, db)
     

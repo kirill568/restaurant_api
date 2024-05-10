@@ -1,8 +1,8 @@
-"""init
+"""db_init
 
-Revision ID: 4f77ec297c1d
+Revision ID: 3d46706d145b
 Revises: 
-Create Date: 2024-04-16 20:48:23.196421
+Create Date: 2024-05-10 16:34:05.080075
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '4f77ec297c1d'
+revision: str = '3d46706d145b'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -25,7 +25,7 @@ def upgrade() -> None:
     sa.Column('first_name', sa.String(length=30), nullable=False),
     sa.Column('patronymic', sa.String(length=30), nullable=False),
     sa.Column('phone_number', sa.String(length=20), nullable=False),
-    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_client_first_name'), 'client', ['first_name'], unique=False)
@@ -35,25 +35,25 @@ def upgrade() -> None:
     op.create_index(op.f('ix_client_phone_number'), 'client', ['phone_number'], unique=False)
     op.create_table('type_of_dish',
     sa.Column('name', sa.String(length=30), nullable=False),
-    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_type_of_dish_id'), 'type_of_dish', ['id'], unique=False)
     op.create_index(op.f('ix_type_of_dish_name'), 'type_of_dish', ['name'], unique=False)
     op.create_table('type_of_product',
     sa.Column('name', sa.String(length=30), nullable=False),
-    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_type_of_product_id'), 'type_of_product', ['id'], unique=False)
     op.create_index(op.f('ix_type_of_product_name'), 'type_of_product', ['name'], unique=False)
     op.create_table('unit_of_measurement',
-    sa.Column('name_unit_of_measurement', sa.String(length=100), nullable=False),
-    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('name', sa.String(length=100), nullable=False),
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_unit_of_measurement_id'), 'unit_of_measurement', ['id'], unique=False)
-    op.create_index(op.f('ix_unit_of_measurement_name_unit_of_measurement'), 'unit_of_measurement', ['name_unit_of_measurement'], unique=False)
+    op.create_index(op.f('ix_unit_of_measurement_name'), 'unit_of_measurement', ['name'], unique=False)
     op.create_table('dish',
     sa.Column('name', sa.String(length=100), nullable=False),
     sa.Column('cost', sa.Float(), nullable=False),
@@ -61,8 +61,8 @@ def upgrade() -> None:
     sa.Column('calories', sa.Float(), nullable=False),
     sa.Column('cooking_time', sa.Time(), nullable=False),
     sa.Column('type_of_dish_id', sa.Integer(), nullable=True),
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['type_of_dish_id'], ['type_of_product.id'], ),
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
+    sa.ForeignKeyConstraint(['type_of_dish_id'], ['type_of_dish.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_dish_calories'), 'dish', ['calories'], unique=False)
@@ -74,7 +74,7 @@ def upgrade() -> None:
     op.create_table('order',
     sa.Column('client_id', sa.Integer(), nullable=True),
     sa.Column('date', sa.DateTime(), nullable=False),
-    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.ForeignKeyConstraint(['client_id'], ['client.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
@@ -83,7 +83,7 @@ def upgrade() -> None:
     op.create_table('product',
     sa.Column('name', sa.String(length=30), nullable=False),
     sa.Column('type_of_product_id', sa.Integer(), nullable=True),
-    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.ForeignKeyConstraint(['type_of_product_id'], ['type_of_product.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
@@ -92,9 +92,9 @@ def upgrade() -> None:
     op.create_table('bill',
     sa.Column('order_id', sa.Integer(), nullable=True),
     sa.Column('dish_id', sa.Integer(), nullable=True),
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['dish_id'], ['dish.id'], ),
-    sa.ForeignKeyConstraint(['order_id'], ['order.id'], ),
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
+    sa.ForeignKeyConstraint(['dish_id'], ['dish.id']),
+    sa.ForeignKeyConstraint(['order_id'], ['order.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_bill_id'), 'bill', ['id'], unique=False)
@@ -103,7 +103,7 @@ def upgrade() -> None:
     sa.Column('dish_id', sa.Integer(), nullable=True),
     sa.Column('number_of_products', sa.Float(), nullable=False),
     sa.Column('unit_of_measurement_id', sa.Integer(), nullable=True),
-    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.ForeignKeyConstraint(['dish_id'], ['dish.id'], ),
     sa.ForeignKeyConstraint(['product_id'], ['product.id'], ),
     sa.ForeignKeyConstraint(['unit_of_measurement_id'], ['unit_of_measurement.id'], ),
@@ -134,7 +134,7 @@ def downgrade() -> None:
     op.drop_index(op.f('ix_dish_cooking_time'), table_name='dish')
     op.drop_index(op.f('ix_dish_calories'), table_name='dish')
     op.drop_table('dish')
-    op.drop_index(op.f('ix_unit_of_measurement_name_unit_of_measurement'), table_name='unit_of_measurement')
+    op.drop_index(op.f('ix_unit_of_measurement_name'), table_name='unit_of_measurement')
     op.drop_index(op.f('ix_unit_of_measurement_id'), table_name='unit_of_measurement')
     op.drop_table('unit_of_measurement')
     op.drop_index(op.f('ix_type_of_product_name'), table_name='type_of_product')
