@@ -1,7 +1,7 @@
 from app.services.base_service import BaseService
 
 from app.models.product import Product
-from app.models.type_of_product import Type_of_product
+from app.models.type_of_product import TypeOfProduct
 
 from app.repository.product_repository import ProductRepository
 from app.repository.type_of_product_repository import TypeOfProductRepository
@@ -28,7 +28,7 @@ class ProductService(BaseService):
         return await self.product_repository.update(item, id)
     
     async def _is_product_type_exist(self, id: int):
-        product_type: Type_of_product = await self.type_of_product_repository.get_by_id(id)
+        product_type: TypeOfProduct = await self.type_of_product_repository.get_by_id(id)
         if product_type is None:
             raise NotFoundError("Product type not found")
         

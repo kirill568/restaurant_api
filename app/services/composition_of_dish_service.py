@@ -1,11 +1,11 @@
 from typing import List
 
-from app.schemas.composition_of_dish.create_composition_of_dish_schema import Create_composition_of_dish_schema
-from app.schemas.composition_of_dish.update_composition_of_dish_schema import Update_composition_of_dish_schema
+from app.schemas.composition_of_dish.create_composition_of_dish_schema import CreateCompositionOfDishSchema
+from app.schemas.composition_of_dish.update_composition_of_dish_schema import UpdateCompositionOfDishSchema
 from app.services.base_service import BaseService
 
 from app.models.product import Product
-from app.models.unit_of_measurement import Unit_of_measurement
+from app.models.unit_of_measurement import UnitOfMeasurement
 
 from app.repository.composition_of_dish_repository import CompositionOfDishRepository
 from app.repository.product_repository import ProductRepository
@@ -20,7 +20,7 @@ class CompositionOfDishService(BaseService):
         self.unit_of_measurement_repository = unit_of_measurement_repository
         super().__init__(composition_of_dish_repository)
 
-    async def create_recipe(self, dish_id: int, items: List[Create_composition_of_dish_schema]):
+    async def create_recipe(self, dish_id: int, items: List[CreateCompositionOfDishSchema]):
         for item in items:
             await self._is_product_exist(item.product_id)
             await self._is_unit_of_measurement_exist(item.unit_of_measurement_id)
@@ -29,7 +29,7 @@ class CompositionOfDishService(BaseService):
             item.dish_id = dish_id
             await self.composition_of_dish_repository.create(item)
     
-    async def update_recipe(self, dish_id: int, items: List[Update_composition_of_dish_schema]):
+    async def update_recipe(self, dish_id: int, items: List[UpdateCompositionOfDishSchema]):
         for item in items:
             await self._is_product_exist(item.product_id)
             await self._is_unit_of_measurement_exist(item.unit_of_measurement_id)
@@ -48,7 +48,7 @@ class CompositionOfDishService(BaseService):
         return True
 
     async def _is_unit_of_measurement_exist(self, id: int):
-        unit_of_measurement: Unit_of_measurement = await self.unit_of_measurement_repository.get_by_id(id)
+        unit_of_measurement: UnitOfMeasurement = await self.unit_of_measurement_repository.get_by_id(id)
         if unit_of_measurement == None:
             raise NotFoundError("Unit of measurement not found")
         

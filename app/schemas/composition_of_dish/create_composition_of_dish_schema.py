@@ -3,7 +3,7 @@ from pydantic import Field
 from typing import Annotated
 from datetime import time
 
-class Create_composition_of_dish_schema(BaseSchema):
+class CreateCompositionOfDishSchema(BaseSchema):
     product_id: Annotated[int, Field(gt=0)]
     number_of_products: Annotated[int, Field(gt=0)]
     unit_of_measurement_id: Annotated[int, Field(gt=0)]

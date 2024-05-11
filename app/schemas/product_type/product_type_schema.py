@@ -2,7 +2,7 @@ from app.schemas.base_schema import BaseSchema
 from pydantic import Field
 from typing import Annotated
 
-class Product_type_schema(BaseSchema):
+class ProductTypeSchema(BaseSchema):
     id: Annotated[int, Field(gt=0)]
     name: Annotated[str, Field(min_length=2, max_length=100)]
 

@@ -8,7 +8,7 @@ from app.models.order import Order
 from app.schemas.order.create_order_schema import Create_order_schema
 from app.schemas.order.order_schema import Order_schema
 
-from app.schemas.responses.entity_created import Entity_created
+from app.schemas.responses.entity_created import EntityCreated
 from app.schemas.responses.message import Message
 
 from app.repository import OrderRepository
@@ -34,7 +34,7 @@ async def valid_order_id(id: int, repository: OrderRepository = Depends(Provide[
     return order
 # -------------
 
-@router.post("", response_model=Entity_created)
+@router.post("", response_model=EntityCreated)
 @inject
 async def create_order(item: Create_order_schema, service: OrderService = Depends(Provide[Container.order_service])):
     order_id, order_price = await service.create_order(item)

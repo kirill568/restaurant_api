@@ -9,7 +9,7 @@ from app.schemas.client.create_client_schema import Create_client_schema
 from app.schemas.client.client_schema import Client_schema
 from app.schemas.client.update_client_schema import Update_client_schema
 
-from app.schemas.responses.entity_created import Entity_created
+from app.schemas.responses.entity_created import EntityCreated
 from app.schemas.responses.message import Message
 
 from app.repository import ClientRepository
@@ -43,7 +43,7 @@ async def get_clients(repository: ClientRepository = Depends(Provide[Container.c
 async def get_client(client: Client = Depends(valid_client_id)):    
     return client
 
-@router.post("", response_model=Entity_created)
+@router.post("", response_model=EntityCreated)
 @inject
 async def create_client(item: Create_client_schema, repository: ClientRepository = Depends(Provide[Container.client_repository])):
     item: Client = await repository.create(item)

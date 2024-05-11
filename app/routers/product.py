@@ -4,13 +4,13 @@ from typing import Union, List
 from fastapi.responses import JSONResponse
 
 from app.models.product import Product
-from app.models.type_of_product import Type_of_product
+from app.models.type_of_product import TypeOfProduct
 
 from app.schemas.product.create_product_schema import Create_product_schema
 from app.schemas.product.product_schema import Product_schema
 from app.schemas.product.update_product_schema import Update_product_schema
 
-from app.schemas.responses.entity_created import Entity_created
+from app.schemas.responses.entity_created import EntityCreated
 from app.schemas.responses.message import Message
 
 from app.services import ProductService
@@ -47,7 +47,7 @@ async def get_products(repository: ProductRepository = Depends(Provide[Container
 async def get_product(product: Product = Depends(valid_product_id)):    
     return product
 
-@router.post("", response_model=Entity_created)
+@router.post("", response_model=EntityCreated)
 @inject
 async def create_product(
     item: Create_product_schema, 

@@ -2,7 +2,7 @@ from app.schemas.base_schema import BaseSchema
 from pydantic import Field
 from typing import Annotated
 
-class Update_product_type_schema(BaseSchema):
+class UpdateProductTypeSchema(BaseSchema):
     name: Annotated[str, Field(min_length=2, max_length=100)]
 
     class ConfigDict:

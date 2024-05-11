@@ -2,7 +2,7 @@ from sqlalchemy import Column, Float, ForeignKey, Integer
 from sqlalchemy.orm import relationship
 from app.models.base import BaseModel
 
-class Composition_of_dish(BaseModel):
+class CompositionOfDish(BaseModel):
     __tablename__ = "composition_of_dish"
 
     product_id = Column(Integer, ForeignKey("product.id"))
@@ -12,4 +12,4 @@ class Composition_of_dish(BaseModel):
 
     product = relationship("Product", back_populates="composition_of_dishes")
     dish = relationship("Dish", back_populates="composition_of_dishes")
-    unit_of_measurement = relationship("Unit_of_measurement", back_populates="composition_of_dishes")
+    unit_of_measurement = relationship("UnitOfMeasurement", back_populates="composition_of_dishes")

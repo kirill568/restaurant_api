@@ -4,16 +4,16 @@ from typing import Union, List
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.responses import JSONResponse
 
-from app.models.composition_of_dish import Composition_of_dish
+from app.models.composition_of_dish import CompositionOfDish
 from app.models.dish import Dish
 from app.models.product import Product
-from app.models.unit_of_measurement import Unit_of_measurement
+from app.models.unit_of_measurement import UnitOfMeasurement
 
-from app.schemas.composition_of_dish.create_composition_of_dish_schema import Create_composition_of_dish_schema
-from app.schemas.composition_of_dish.composition_of_dish_schema import Composition_of_dish_schema
-from app.schemas.composition_of_dish.update_composition_of_dish_schema import Update_composition_of_dish_schema
+from app.schemas.composition_of_dish.create_composition_of_dish_schema import CreateCompositionOfDishSchema
+from app.schemas.composition_of_dish.composition_of_dish_schema import CompositionOfDishSchema
+from app.schemas.composition_of_dish.update_composition_of_dish_schema import UpdateCompositionOfDishSchema
 
-from app.schemas.responses.entity_created import Entity_created
+from app.schemas.responses.entity_created import EntityCreated
 from app.schemas.responses.message import Message
 
 from app.repository import CompositionOfDishRepository
@@ -29,15 +29,15 @@ router = APIRouter(
     tags=["recipe"]
 )
 
-@router.get("/{dish_id}", response_model=List[Composition_of_dish_schema], responses={status.HTTP_404_NOT_FOUND: {"model": Message}})
+@router.get("/{dish_id}", response_model=List[CompositionOfDishSchema], responses={status.HTTP_404_NOT_FOUND: {"model": Message}})
 @inject
 async def get_recipe_by_dish(dish: Dish = Depends(valid_dish_id), repository: CompositionOfDishRepository = Depends(Provide[Container.composition_of_dish_repository])):    
     return await repository.get_recipe_for_dish(dish.id)
 
-@router.post("/{dish_id}", response_model=Entity_created)
+@router.post("/{dish_id}", response_model=EntityCreated)
 @inject
 async def create_recipe(
-    items: List[Create_composition_of_dish_schema], 
+    items: List[CreateCompositionOfDishSchema], 
     dish: Dish = Depends(valid_dish_id),
     service: CompositionOfDishService = Depends(Provide[Container.composition_of_dish_service])
 ):
@@ -48,7 +48,7 @@ async def create_recipe(
 @router.put("/{dish_id}", responses={status.HTTP_200_OK: {"model": Message}, status.HTTP_404_NOT_FOUND: {"model": Message}})
 @inject
 async def update_recipe(
-    items: List[Update_composition_of_dish_schema], 
+    items: List[UpdateCompositionOfDishSchema], 
     dish: Dish = Depends(valid_dish_id),
     service: CompositionOfDishService = Depends(Provide[Container.composition_of_dish_service])
 ):    

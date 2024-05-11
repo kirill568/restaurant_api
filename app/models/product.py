@@ -8,6 +8,6 @@ class Product(BaseModel):
     name = Column(String(30), index=True, nullable=False)
     type_of_product_id = Column(Integer, ForeignKey("type_of_product.id"))
 
-    type_of_product = relationship("Type_of_product", back_populates="products")
-    composition_of_dishes = relationship("Composition_of_dish", cascade="all, delete-orphan", lazy="selectin")
+    type_of_product = relationship("TypeOfProduct", back_populates="products")
+    composition_of_dishes = relationship("CompositionOfDish", cascade="all, delete-orphan", lazy="selectin")
 

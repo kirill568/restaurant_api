@@ -9,7 +9,7 @@ from app.schemas.dish.create_dish_schema import Create_dish_schema
 from app.schemas.dish.dish_schema import Dish_schema
 from app.schemas.dish.update_dish_schema import Update_dish_schema
 
-from app.schemas.responses.entity_created import Entity_created
+from app.schemas.responses.entity_created import EntityCreated
 from app.schemas.responses.message import Message
 
 from app.services import DishService
@@ -46,7 +46,7 @@ async def get_dishes(repository: DishRepository = Depends(Provide[Container.dish
 async def get_dish(dish: Dish = Depends(valid_dish_id)):    
     return dish
 
-@router.post("/dish", response_model=Entity_created)
+@router.post("/dish", response_model=EntityCreated)
 @inject
 async def create_dish(item: Create_dish_schema, service: DishService = Depends(Provide[Container.dish_service])):
     item = await service.create_dish(item)

@@ -1,7 +1,7 @@
 from app.services.base_service import BaseService
 
 from app.models.dish import Dish
-from app.models.type_of_dish import Type_of_dish
+from app.models.type_of_dish import TypeOfDish
 
 from app.repository.dish_repository import DishRepository
 from app.repository.type_of_dish_repository import TypeOfDishRepository
@@ -28,7 +28,7 @@ class DishService(BaseService):
         return await self.dish_repository.update(item, id)
     
     async def _is_dish_type_exist(self, id: int):
-        dish_type: Type_of_dish = await self.type_of_dish_repository.get_by_id(id)
+        dish_type: TypeOfDish = await self.type_of_dish_repository.get_by_id(id)
         if dish_type is None:
             raise NotFoundError("Dish type not found")
         
