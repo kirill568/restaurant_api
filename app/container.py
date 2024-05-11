@@ -7,15 +7,8 @@ from app.services import *
 
 class Container(containers.DeclarativeContainer):
     wiring_config = containers.WiringConfiguration(
-        modules=[
-            "app.routers.unit_of_measurements",
-            "app.routers.product_type",
-            "app.routers.product",
-            "app.routers.dish_type",
-            "app.routers.dish",
-            "app.routers.composition_of_dish",
-            "app.routers.client",
-            "app.routers.order",
+        packages=[
+            "app.routers",
         ]
     )
 

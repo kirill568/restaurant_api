@@ -1,9 +1,9 @@
-from pydantic import BaseModel
+from app.schemas.base_schema import BaseSchema
 from pydantic import Field 
 from typing import Annotated, List
 from app.schemas.address.address_schema import Address_schema
 
-class Create_order_schema(BaseModel):
+class Create_order_schema(BaseSchema):
     timestamp: Annotated[int, Field(gt=0)]
     dishes_ids: List[int]
     address: Address_schema

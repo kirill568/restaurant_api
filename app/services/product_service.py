@@ -18,12 +18,12 @@ class ProductService(BaseService):
         super().__init__(product_repository)
 
     async def create_product(self, item: Create_product_schema):        
-        self._is_product_type_exist(item.type_of_product_id)
+        await self._is_product_type_exist(item.type_of_product_id)
 
         return await self.product_repository.create(item)
     
     async def update_product(self, item: Update_product_schema, id: int):        
-        self._is_product_type_exist(item.type_of_product_id)
+        await self._is_product_type_exist(item.type_of_product_id)
 
         return await self.product_repository.update(item, id)
     

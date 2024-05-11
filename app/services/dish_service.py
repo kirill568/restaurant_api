@@ -18,12 +18,12 @@ class DishService(BaseService):
         super().__init__(dish_repository)
 
     async def create_dish(self, item: Create_dish_schema):        
-        self._is_dish_type_exist(item.type_of_dish_id)
+        await self._is_dish_type_exist(item.type_of_dish_id)
 
         return await self.dish_repository.create(item)
     
     async def update_dish(self, item: Update_dish_schema, id: int):        
-        self._is_dish_type_exist(item.type_of_dish_id)
+        await self._is_dish_type_exist(item.type_of_dish_id)
 
         return await self.dish_repository.update(item, id)
     

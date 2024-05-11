@@ -1,9 +1,9 @@
-from pydantic import BaseModel
+from app.schemas.base_schema import BaseSchema
 from pydantic import Field
 from typing import Annotated
 from datetime import time
 
-class Create_composition_of_dish_schema(BaseModel):
+class Create_composition_of_dish_schema(BaseSchema):
     product_id: Annotated[int, Field(gt=0)]
     number_of_products: Annotated[int, Field(gt=0)]
     unit_of_measurement_id: Annotated[int, Field(gt=0)]

@@ -1,9 +1,9 @@
-from pydantic import BaseModel
+from app.schemas.base_schema import BaseSchema
 from pydantic import Field
 from typing import Annotated
 from datetime import time
 
-class Create_dish_schema(BaseModel):
+class Create_dish_schema(BaseSchema):
     name: Annotated[str, Field(min_length=2, max_length=100)]
     cost: Annotated[float, Field(gt=0.0)]
     weight: Annotated[float, Field(gt=0.0)]

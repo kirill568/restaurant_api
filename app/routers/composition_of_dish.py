@@ -22,23 +22,12 @@ from app.services import CompositionOfDishService
 
 from app.container import Container
 
-from app.exceptions import NotFoundError
+from app.routers.dish import valid_dish_id
 
 router = APIRouter(
     prefix="/recipe", 
     tags=["recipe"]
 )
-
-# dependencies
-# -------------
-@inject
-async def valid_dish_id(dish_id: int, repository: CompositionOfDishRepository = Depends(Provide[Container.composition_of_dish_repository])):
-    dish: Dish = await repository.get_by_id(dish_id)
-    if dish == None:
-        raise NotFoundError("Recipe not found")
-    
-    return dish
-# -------------
 
 @router.get("/{dish_id}", response_model=List[Composition_of_dish_schema], responses={status.HTTP_404_NOT_FOUND: {"model": Message}})
 @inject
@@ -52,7 +41,7 @@ async def create_recipe(
     dish: Dish = Depends(valid_dish_id),
     service: CompositionOfDishService = Depends(Provide[Container.composition_of_dish_service])
 ):
-    service.create_recipe(dish.id, items)
+    await service.create_recipe(dish.id, items)
 
     return JSONResponse(content={"message": "Recipe successfully created"})
 
@@ -63,7 +52,7 @@ async def update_recipe(
     dish: Dish = Depends(valid_dish_id),
     service: CompositionOfDishService = Depends(Provide[Container.composition_of_dish_service])
 ):    
-    service.update_recipe(dish.id, items)
+    await service.update_recipe(dish.id, items)
 
     return JSONResponse(status_code=status.HTTP_200_OK, content={"message": "Recipe successfully updated"})
 

@@ -1,8 +1,8 @@
-from pydantic import BaseModel
+from app.schemas.base_schema import BaseSchema
 from pydantic import Field
 from typing import Annotated
 
-class Unit_of_measurement_schema(BaseModel):
+class Unit_of_measurement_schema(BaseSchema):
     id: Annotated[int, Field(gt=0)]
     name: Annotated[str, Field(min_length=2, max_length=100)]
 

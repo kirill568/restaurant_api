@@ -2,7 +2,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
 from app.models.base import BaseModel
-from pydantic import BaseModel as BaseSchema
+from app.schemas.base_schema import BaseSchema
+
+from typing import Union
 
 class BaseRepository:
     def __init__(self, session: AsyncSession, model: BaseModel) -> None:
@@ -18,15 +20,15 @@ class BaseRepository:
             result = await session.execute(select(self.model))
             return result.scalars().all()
 
-    async def create(self, schema: BaseSchema):
+    async def create(self, schema: Union[BaseSchema, BaseModel]):
         async with self.session() as session:
-            db_model = self.model(**schema.model_dump())
+            db_model = self.model(**schema.dict())
             session.add(db_model)
             await session.commit()
             await session.refresh(db_model)
             return db_model
 
-    async def update(self, schema: BaseSchema, id):
+    async def update(self, schema: Union[BaseSchema, BaseModel], id):
         async with self.session() as session:
             db_model = await session.get(self.model, id)
             if db_model is None:
