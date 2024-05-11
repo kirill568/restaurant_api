@@ -1,9 +1,9 @@
 from app.schemas.base_schema import BaseSchema
 from pydantic import Field 
 from typing import Annotated, List
-from app.schemas.address.address_schema import Address_schema
+from app.schemas.address.address_schema import AddressSchema
 
-class Order_schema(BaseSchema):
+class OrderSchema(BaseSchema):
     id: Annotated[int, Field(gt=0)]
     timestamp: Annotated[int, Field(gt=0)]
     dishes_ids: List[int]

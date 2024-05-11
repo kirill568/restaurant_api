@@ -10,9 +10,9 @@ from app.repository.bill_repository import BillRepository
 from app.repository.client_repository import ClientRepository
 from app.repository.dish_repository import DishRepository
 
-from app.schemas.bill.create_bill_schema import Create_bill_schema
-from app.schemas.order.create_order_schema import Create_order_schema
-from app.schemas.order.order_schema import Order_schema
+from app.schemas.bill.create_bill_schema import CreateBillSchema
+from app.schemas.order.create_order_schema import CreateOrderSchema
+from app.schemas.order.order_schema import OrderSchema
 
 from app.exceptions import NotFoundError
 
@@ -28,7 +28,7 @@ class OrderService(BaseService):
         self.dish_repository = dish_repository
         super().__init__(order_repository)
 
-    async def create_order(self, item: Create_order_schema):
+    async def create_order(self, item: CreateOrderSchema):
         await self._is_client_exist(item.client_id)
 
         order: Order = await self.order_repository.create(Order(
@@ -66,7 +66,7 @@ class OrderService(BaseService):
     async def prepare_order(self, order: Order):
         bills: List[Bill] = await self.bill_repository.get_bills_for_order(order.id)
 
-        return Order_schema(
+        return OrderSchema(
             id=order.id,
             client_id=order.client_id, 
             timestamp=datetime.timestamp(order.date),

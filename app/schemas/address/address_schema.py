@@ -2,7 +2,7 @@ from app.schemas.base_schema import BaseSchema
 from pydantic import Field
 from typing import Annotated
 
-class Address_schema(BaseSchema):
+class AddressSchema(BaseSchema):
     city: Annotated[str, Field(min_length=2, max_length=100)]
     street: Annotated[str, Field(min_length=2, max_length=100)]
     house_number: Annotated[str, Field(min_length=2, max_length=10)]

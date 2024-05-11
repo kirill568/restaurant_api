@@ -1,12 +1,12 @@
 from app.schemas.base_schema import BaseSchema
 from pydantic import Field 
 from typing import Annotated, List
-from app.schemas.address.address_schema import Address_schema
+from app.schemas.address.address_schema import AddressSchema
 
-class Create_order_schema(BaseSchema):
+class CreateOrderSchema(BaseSchema):
     timestamp: Annotated[int, Field(gt=0)]
     dishes_ids: List[int]
-    address: Address_schema
+    address: AddressSchema
     client_id: Annotated[int, Field(gt=0)]
 
     class ConfigDict:

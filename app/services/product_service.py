@@ -6,8 +6,8 @@ from app.models.type_of_product import TypeOfProduct
 from app.repository.product_repository import ProductRepository
 from app.repository.type_of_product_repository import TypeOfProductRepository
 
-from app.schemas.product.create_product_schema import Create_product_schema
-from app.schemas.product.update_product_schema import Update_product_schema
+from app.schemas.product.create_product_schema import CreateProductSchema
+from app.schemas.product.update_product_schema import UpdateProductSchema
 
 from app.exceptions import NotFoundError
 
@@ -17,12 +17,12 @@ class ProductService(BaseService):
         self.type_of_product_repository = type_of_product_repository
         super().__init__(product_repository)
 
-    async def create_product(self, item: Create_product_schema):        
+    async def create_product(self, item: CreateProductSchema):        
         await self._is_product_type_exist(item.type_of_product_id)
 
         return await self.product_repository.create(item)
     
-    async def update_product(self, item: Update_product_schema, id: int):        
+    async def update_product(self, item: UpdateProductSchema, id: int):        
         await self._is_product_type_exist(item.type_of_product_id)
 
         return await self.product_repository.update(item, id)

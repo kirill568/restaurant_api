@@ -3,7 +3,7 @@ from pydantic import Field
 from typing import Annotated
 from datetime import time
 
-class Update_dish_schema(BaseSchema):
+class UpdateDishSchema(BaseSchema):
     name: Annotated[str, Field(min_length=2, max_length=100)]
     cost: Annotated[float, Field(gt=0.0)]
     weight: Annotated[float, Field(gt=0.0)]

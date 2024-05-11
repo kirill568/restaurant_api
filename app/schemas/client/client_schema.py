@@ -2,7 +2,7 @@ from app.schemas.base_schema import BaseSchema
 from pydantic import Field
 from typing import Annotated
 
-class Client_schema(BaseSchema):
+class ClientSchema(BaseSchema):
     id: Annotated[int, Field(gt=0)]
     last_name: Annotated[str, Field(min_length=2, max_length=30)]
     first_name: Annotated[str, Field(min_length=2, max_length=30)]
