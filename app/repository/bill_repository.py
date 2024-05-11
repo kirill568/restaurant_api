@@ -1,18 +1,15 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.bill import Bill
 from sqlalchemy.future import select
+from app.repository.base_repository import BaseRepository
 
-async def create_bill(order_id: int, dish_id: int, db: AsyncSession):
-    bill = Bill()
-    bill.order_id = order_id
-    bill.dish_id = dish_id
+class BillRepository(BaseRepository):
+    def __init__(self, session: AsyncSession):
+        self.session = session
+        super().__init__(session, Bill)
 
-    db.add(bill)
-    await db.commit()
-    await db.refresh(bill)
-    return bill
-
-async def get_bills_for_order(order_id: int, db: AsyncSession):
-    stmt = select(Bill).where(Bill.order_id == order_id)
-    result = await db.execute(stmt)
-    return result.scalars().all()
+    async def get_bills_for_order(self, order_id: int):
+        async with self.session() as session:
+            stmt = select(Bill).where(Bill.order_id == order_id)
+            result = await session.execute(stmt)
+            return result.scalars().all()

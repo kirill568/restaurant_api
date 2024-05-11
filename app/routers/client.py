@@ -1,7 +1,6 @@
 from fastapi import APIRouter, status, Response, Path, Depends
+from dependency_injector.wiring import Provide, inject
 from typing import Union, List
-from app.database import get_db
-from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.responses import JSONResponse
 
 from app.models.client import Client
@@ -13,45 +12,54 @@ from app.schemas.client.update_client_schema import Update_client_schema
 from app.schemas.responses.entity_created import Entity_created
 from app.schemas.responses.message import Message
 
-from app.repository import crud
+from app.repository import ClientRepository
+
+from app.container import Container
+
+from app.exceptions import NotFoundError
 
 router = APIRouter(
     prefix="/clients", 
     tags=["clients"]
 )
 
+# dependencies
+# -------------
+@inject
+async def valid_client_id(id: int, repository: ClientRepository = Depends(Provide[Container.client_repository])):
+    client: Client = await repository.get_by_id(id)
+    if client == None:
+        raise NotFoundError("Client not found")
+    
+    return client
+# -------------
+
 @router.get("", response_model=Union[List[Client_schema], None])
-async def get_clients(db: AsyncSession = Depends(get_db)):
-    all_items: List[Client] = await crud.get_all(Client, db)
-    return all_items
+@inject
+async def get_clients(repository: ClientRepository = Depends(Provide[Container.client_repository])):
+    return await repository.get_all()
 
 @router.get("/{id}", response_model=Client_schema, responses={status.HTTP_404_NOT_FOUND: {"model": Message}})
-async def get_client(id: int, db: AsyncSession = Depends(get_db)):
-    item: Client = await crud.get_by_id(Client, id, db)
-    if item == None:
-        return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content={"message": "Client not found"})
-    
-    return item
+async def get_client(client: Client = Depends(valid_client_id)):    
+    return client
 
 @router.post("", response_model=Entity_created)
-async def create_client(item: Create_client_schema, db: AsyncSession = Depends(get_db)):
-    item: Client = await crud.create(Client, item, db)
+@inject
+async def create_client(item: Create_client_schema, repository: ClientRepository = Depends(Provide[Container.client_repository])):
+    item: Client = await repository.create(item)
+
     return JSONResponse(content={"id": item.id})
 
 @router.put("/{id}", responses={status.HTTP_200_OK: {"model": Message}, status.HTTP_404_NOT_FOUND: {"model": Message}})
-async def update_client(id: int, item: Update_client_schema, db: AsyncSession = Depends(get_db)):
-    item: Client = await crud.update(Client, item, id, db)
-    if item == None:
-        return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content={"message": "Client not found"})
+@inject
+async def update_client(item: Update_client_schema, client: Client = Depends(valid_client_id), repository: ClientRepository = Depends(Provide[Container.client_repository])):
+    item: Client = await repository.update(item, client.id)
 
     return JSONResponse(status_code=status.HTTP_200_OK, content={"message": "Client successfully updated"})
 
 @router.delete("/{id}", responses={status.HTTP_200_OK: {"model": Message}, status.HTTP_404_NOT_FOUND: {"model": Message}})
-async def remove_client(id: int, db: AsyncSession = Depends(get_db)):
-    item: Client = await crud.get_by_id(Client, id, db)
-    if item == None:
-        return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content={"message": "Client not found"})
-    
-    await crud.delete(Client, id, db)
+@inject
+async def remove_client(client: Client = Depends(valid_client_id), repository: ClientRepository = Depends(Provide[Container.client_repository])):    
+    await repository.delete(client.id)
 
     return JSONResponse(status_code=status.HTTP_200_OK, content={"message": "Client successfully removed"})

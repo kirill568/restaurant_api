@@ -1,10 +1,6 @@
-from typing import Union
-from fastapi import FastAPI, Response, status, Request
-from fastapi.responses import HTMLResponse
-from fastapi.middleware.trustedhost import TrustedHostMiddleware
+from fastapi import FastAPI
 
-from app.config import POSTGRES_DATABASE_URL
-from app.database import db_manager
+from app.container import Container
 
 from app.routers import unit_of_measurements
 from app.routers import product_type
@@ -15,15 +11,30 @@ from app.routers import composition_of_dish
 from app.routers import client
 from app.routers import order
 
-db_manager.init(POSTGRES_DATABASE_URL)
+class AppCreator:
+    def __init__(self):
+        # set app default
+        self.app = FastAPI()
 
-app = FastAPI()
+        # set db and container
+        self.container = Container()
+        self.db = self.container.db()
 
-app.include_router(unit_of_measurements.router)
-app.include_router(product_type.router)
-app.include_router(product.router)
-app.include_router(dish_type.router)
-app.include_router(dish.router)
-app.include_router(composition_of_dish.router)
-app.include_router(client.router)
-app.include_router(order.router)
+        # set routes
+        @self.app.get("/")
+        def root():
+            return "service is working"
+
+        self.app.include_router(unit_of_measurements.router)
+        self.app.include_router(product_type.router)
+        self.app.include_router(product.router)
+        self.app.include_router(dish_type.router)
+        self.app.include_router(dish.router)
+        self.app.include_router(composition_of_dish.router)
+        self.app.include_router(client.router)
+        self.app.include_router(order.router)
+
+app_creator = AppCreator()
+app = app_creator.app
+db = app_creator.db
+container = app_creator.container

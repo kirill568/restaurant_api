@@ -10,9 +10,11 @@ from sqlalchemy.ext.asyncio import (
 )
 
 class DatabaseSessionManager:
-    def __init__(self) -> None:
+    def __init__(self, db_url) -> None:
         self._engine: Optional[AsyncEngine] = None
         self._sessionmaker: Optional[async_sessionmaker[AsyncSession]] = None
+
+        self.init(db_url)
 
     def init(self, db_url: str) -> None:
         if "postgresql" in db_url:
@@ -60,10 +62,3 @@ class DatabaseSessionManager:
             except Exception:
                 await connection.rollback()
                 raise
-
-
-db_manager = DatabaseSessionManager()
-
-async def get_db() -> AsyncIterator[AsyncSession]:
-    async with db_manager.session() as session:
-        yield session

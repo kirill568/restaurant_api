@@ -1,6 +1,6 @@
 from fastapi import APIRouter, status, Response, Path, Depends
+from dependency_injector.wiring import Provide, inject
 from typing import Union, List
-from app.database import get_db
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.responses import JSONResponse
 
@@ -16,92 +16,60 @@ from app.schemas.composition_of_dish.update_composition_of_dish_schema import Up
 from app.schemas.responses.entity_created import Entity_created
 from app.schemas.responses.message import Message
 
-from app.repository import crud
-from app.repository.composition_of_dish import get_recipe_for_dish, delete_recipe_of_dish
+from app.repository import CompositionOfDishRepository
+
+from app.services import CompositionOfDishService
+
+from app.container import Container
+
+from app.exceptions import NotFoundError
 
 router = APIRouter(
     prefix="/recipe", 
     tags=["recipe"]
 )
 
-# Help funtions
+# dependencies
 # -------------
-async def is_dish_exist(id: int, db: AsyncSession):
-    dish: Dish = await crud.get_by_id(Dish, id, db)
+@inject
+async def valid_dish_id(dish_id: int, repository: CompositionOfDishRepository = Depends(Provide[Container.composition_of_dish_repository])):
+    dish: Dish = await repository.get_by_id(dish_id)
     if dish == None:
-        return False, "Dish not found"
+        raise NotFoundError("Recipe not found")
     
-    return True, ""
-
-async def is_product_exist(id: int, db: AsyncSession):
-    product: Product = await crud.get_by_id(Product, id, db)
-    if product == None:
-        return False, "Product not found"
-    
-    return True, ""
-
-async def is_unit_of_measurement_exist(id: int, db: AsyncSession):
-    unit_of_measurement: Unit_of_measurement = await crud.get_by_id(Unit_of_measurement, id, db)
-    if unit_of_measurement == None:
-        return False, "Unit of measurement not found"
-    
-    return True, ""
+    return dish
 # -------------
 
 @router.get("/{dish_id}", response_model=List[Composition_of_dish_schema], responses={status.HTTP_404_NOT_FOUND: {"model": Message}})
-async def get_recipe_by_dish(dish_id: int, db: AsyncSession = Depends(get_db)):
-    result, msg = await is_dish_exist(dish_id, db)
-    if not result:
-            return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content={"message": msg})
-    
-    return await get_recipe_for_dish(dish_id, db)
+@inject
+async def get_recipe_by_dish(dish: Dish = Depends(valid_dish_id), repository: CompositionOfDishRepository = Depends(Provide[Container.composition_of_dish_repository])):    
+    return await repository.get_recipe_for_dish(dish.id)
 
 @router.post("/{dish_id}", response_model=Entity_created)
-async def create_recipe(dish_id: int, items: List[Create_composition_of_dish_schema], db: AsyncSession = Depends(get_db)):
-    print(await is_dish_exist(dish_id, db))
-    result, msg = await is_dish_exist(dish_id, db)
-    if not result:
-        return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content={"message": msg})
-
-    for item in items:
-        result, msg = await is_product_exist(item.product_id, db)
-        result, msg = await is_unit_of_measurement_exist(item.unit_of_measurement_id, db)
-        if not result:
-            return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content={"message": msg})
-
-    for item in items:
-        item.dish_id = dish_id
-        await crud.create(Composition_of_dish, item, db)
+@inject
+async def create_recipe(
+    items: List[Create_composition_of_dish_schema], 
+    dish: Dish = Depends(valid_dish_id),
+    service: CompositionOfDishService = Depends(Provide[Container.composition_of_dish_service])
+):
+    service.create_recipe(dish.id, items)
 
     return JSONResponse(content={"message": "Recipe successfully created"})
 
 @router.put("/{dish_id}", responses={status.HTTP_200_OK: {"model": Message}, status.HTTP_404_NOT_FOUND: {"model": Message}})
-async def update_recipe(dish_id: int, items: List[Update_composition_of_dish_schema], db: AsyncSession = Depends(get_db)):    
-    result, msg = await is_dish_exist(dish_id, db)
-    if not result:
-        return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content={"message": msg})
-
-    for item in items:
-        result, msg = await is_product_exist(item.product_id, db)
-        result, msg = await is_unit_of_measurement_exist(item.unit_of_measurement_id, db)
-        if not result:
-            return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content={"message": msg})
-        
-    await delete_recipe_of_dish(dish_id, db)
-
-    for item in items:
-        item.dish_id = dish_id
-        await crud.create(Composition_of_dish, item, db)
+@inject
+async def update_recipe(
+    items: List[Update_composition_of_dish_schema], 
+    dish: Dish = Depends(valid_dish_id),
+    service: CompositionOfDishService = Depends(Provide[Container.composition_of_dish_service])
+):    
+    service.update_recipe(dish.id, items)
 
     return JSONResponse(status_code=status.HTTP_200_OK, content={"message": "Recipe successfully updated"})
 
 @router.delete("/{dish_id}", responses={status.HTTP_200_OK: {"model": Message}, status.HTTP_404_NOT_FOUND: {"model": Message}})
-async def remove_recipe_by_dish(dish_id: int, db: AsyncSession = Depends(get_db)):
-    result, msg = await is_dish_exist(dish_id, db)
-    if not result:
-        return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content={"message": msg})
-    
-    print(dish_id)
-    await delete_recipe_of_dish(dish_id, db)
+@inject
+async def remove_recipe_by_dish(dish: Dish = Depends(valid_dish_id), repository: CompositionOfDishRepository = Depends(Provide[Container.composition_of_dish_repository])):
+    await repository.delete_recipe_of_dish(dish.id)
 
     return JSONResponse(status_code=status.HTTP_200_OK, content={"message": "Recipe for dish successfully removed"})
