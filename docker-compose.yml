@@ -6,7 +6,7 @@ services:
     depends_on:
       - postgres
     volumes:
-      - ./:/code:ro
+      - ./app:/app/
     ports:
       - "9000:9000"
 

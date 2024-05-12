@@ -16,23 +16,12 @@ from app.repository import TypeOfDishRepository
 
 from app.container import Container
 
-from app.exceptions import NotFoundError
+from app.dependencies.dish_type_dependencies import valid_dish_type_id
 
 router = APIRouter(
     prefix="/dish-type", 
     tags=["dish-type"]
 )
-
-# dependencies
-# -------------
-@inject
-async def valid_dish_type_id(id: int, repository: TypeOfDishRepository = Depends(Provide[Container.type_of_dish_repository])):
-    dish_type: TypeOfDish = await repository.get_by_id(id)
-    if dish_type == None:
-        raise NotFoundError("Dish type not found")
-    
-    return dish_type
-# -------------
 
 @router.get("", response_model=Union[List[DishTypeSchema], None])
 @inject

@@ -16,23 +16,12 @@ from app.repository import UnitOfMeasurementRepository
 
 from app.container import Container
 
-from app.exceptions import NotFoundError
+from app.dependencies.unit_of_mesurement_dependencies import valid_unit_of_measurement_id
 
 router = APIRouter(
     prefix="/unit-of-measurement", 
     tags=["unit-of-measurement"]
 )
-
-# dependencies
-# -------------
-@inject
-async def valid_unit_of_measurement_id(id: int, repository: UnitOfMeasurementRepository = Depends(Provide[Container.unit_of_measurement_repository])):
-    unit_of_measurement: UnitOfMeasurement = await repository.get_by_id(id)
-    if unit_of_measurement == None:
-        raise NotFoundError("Unit of measurement not found")
-    
-    return unit_of_measurement
-# -------------
 
 @router.get("", response_model=Union[List[UnitOfMeasurementSchema], None])
 @inject

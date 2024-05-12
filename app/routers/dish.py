@@ -18,23 +18,12 @@ from app.repository import DishRepository
 
 from app.container import Container
 
-from app.exceptions import NotFoundError
+from app.dependencies.dish_dependencies import valid_dish_id
 
 router = APIRouter(
     prefix="", 
     tags=["dish"]
 )
-
-# dependencies
-# -------------
-@inject
-async def valid_dish_id(id: int, repository: DishRepository = Depends(Provide[Container.dish_repository])):
-    dish: Dish = await repository.get_by_id(id)
-    if dish == None:
-        raise NotFoundError("Dish not found")
-    
-    return dish
-# -------------
 
 @router.get("/dishes", response_model=Union[List[DishSchema], None])
 @inject

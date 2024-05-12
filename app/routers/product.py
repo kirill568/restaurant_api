@@ -4,7 +4,6 @@ from typing import Union, List
 from fastapi.responses import JSONResponse
 
 from app.models.product import Product
-from app.models.type_of_product import TypeOfProduct
 
 from app.schemas.product.create_product_schema import CreateProductSchema
 from app.schemas.product.product_schema import ProductSchema
@@ -19,23 +18,12 @@ from app.repository import ProductRepository
 
 from app.container import Container
 
-from app.exceptions import NotFoundError
+from app.dependencies.product_dependencies import valid_product_id
 
 router = APIRouter(
     prefix="/product", 
     tags=["product"]
 )
-
-# dependencies
-# -------------
-@inject
-async def valid_product_id(id: int, repository: ProductRepository = Depends(Provide[Container.product_repository])):
-    product: Product = await repository.get_by_id(id)
-    if product == None:
-        raise NotFoundError("Product not found")
-    
-    return product
-# -------------
 
 @router.get("", response_model=Union[List[ProductSchema], None])
 @inject
@@ -60,7 +48,7 @@ async def create_product(
 @router.put("/{id}", responses={status.HTTP_200_OK: {"model": Message}, status.HTTP_404_NOT_FOUND: {"model": Message}})
 @inject
 async def update_product(
-    item: CreateProductSchema, 
+    item: UpdateProductSchema, 
     product: Product = Depends(valid_product_id),
     service: ProductService = Depends(Provide[Container.product_service])
 ):

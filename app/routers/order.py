@@ -12,27 +12,17 @@ from app.schemas.responses.entity_created import EntityCreated
 from app.schemas.responses.message import Message
 
 from app.repository import OrderRepository
+
 from app.services import OrderService
 
 from app.container import Container
 
-from app.exceptions import NotFoundError
+from app.dependencies.order_dependencies import valid_order_id
 
 router = APIRouter(
     prefix="/order", 
     tags=["order"]
 )
-
-# dependencies
-# -------------
-@inject
-async def valid_order_id(id: int, repository: OrderRepository = Depends(Provide[Container.order_repository])):
-    order: Order = await repository.get_by_id(id)
-    if order == None:
-        raise NotFoundError("Order not found")
-    
-    return order
-# -------------
 
 @router.post("", response_model=EntityCreated)
 @inject

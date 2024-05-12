@@ -16,23 +16,12 @@ from app.repository import ClientRepository
 
 from app.container import Container
 
-from app.exceptions import NotFoundError
+from app.dependencies.client_dependencies import valid_client_id
 
 router = APIRouter(
     prefix="/clients", 
     tags=["clients"]
 )
-
-# dependencies
-# -------------
-@inject
-async def valid_client_id(id: int, repository: ClientRepository = Depends(Provide[Container.client_repository])):
-    client: Client = await repository.get_by_id(id)
-    if client == None:
-        raise NotFoundError("Client not found")
-    
-    return client
-# -------------
 
 @router.get("", response_model=Union[List[ClientSchema], None])
 @inject

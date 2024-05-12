@@ -12,28 +12,16 @@ from app.schemas.product_type.update_product_type_schema import UpdateProductTyp
 from app.schemas.responses.entity_created import EntityCreated
 from app.schemas.responses.message import Message
 
-
 from app.repository import TypeOfProductRepository
 
 from app.container import Container
 
-from app.exceptions import NotFoundError
+from app.dependencies.product_type_dependencies import valid_product_type_id
 
 router = APIRouter(
     prefix="/product-type", 
     tags=["product-type"]
 )
-
-# dependencies
-# -------------
-@inject
-async def valid_product_type_id(id: int, repository: TypeOfProductRepository = Depends(Provide[Container.type_of_product_repository])):
-    product_type: TypeOfProduct = await repository.get_by_id(id)
-    if product_type == None:
-        raise NotFoundError("Product type not found")
-    
-    return product_type
-# -------------
 
 @router.get("", response_model=Union[List[ProductTypeSchema], None])
 @inject

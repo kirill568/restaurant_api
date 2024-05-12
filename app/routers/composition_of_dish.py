@@ -1,13 +1,9 @@
 from fastapi import APIRouter, status, Response, Path, Depends
 from dependency_injector.wiring import Provide, inject
 from typing import Union, List
-from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.responses import JSONResponse
 
-from app.models.composition_of_dish import CompositionOfDish
 from app.models.dish import Dish
-from app.models.product import Product
-from app.models.unit_of_measurement import UnitOfMeasurement
 
 from app.schemas.composition_of_dish.create_composition_of_dish_schema import CreateCompositionOfDishSchema
 from app.schemas.composition_of_dish.composition_of_dish_schema import CompositionOfDishSchema
@@ -22,7 +18,7 @@ from app.services import CompositionOfDishService
 
 from app.container import Container
 
-from app.routers.dish import valid_dish_id
+from app.dependencies.dish_dependencies import valid_dish_id
 
 router = APIRouter(
     prefix="/recipe", 
