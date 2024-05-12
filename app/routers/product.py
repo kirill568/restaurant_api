@@ -58,7 +58,7 @@ async def update_product(
 
 @router.delete("/{id}", responses={status.HTTP_200_OK: {"model": Message}, status.HTTP_404_NOT_FOUND: {"model": Message}})
 @inject
-async def remove_product_type(product: Product = Depends(valid_product_id), repository: ProductRepository = Depends(Provide[Container.product_repository])):    
+async def remove_product(product: Product = Depends(valid_product_id), repository: ProductRepository = Depends(Provide[Container.product_repository])):    
     await repository.delete(product.id)
 
     return JSONResponse(status_code=status.HTTP_200_OK, content={"message": "Product successfully removed"})

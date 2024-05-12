@@ -9,6 +9,7 @@ class Container(containers.DeclarativeContainer):
     wiring_config = containers.WiringConfiguration(
         packages=[
             "app.routers",
+            "app.dependencies",
         ]
     )
 

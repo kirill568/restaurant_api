@@ -27,7 +27,7 @@ router = APIRouter(
 
 @router.get("/{dish_id}", response_model=List[CompositionOfDishSchema], responses={status.HTTP_404_NOT_FOUND: {"model": Message}})
 @inject
-async def get_recipe_by_dish(dish: Dish = Depends(valid_dish_id), repository: CompositionOfDishRepository = Depends(Provide[Container.composition_of_dish_repository])):    
+async def get_recipe(dish: Dish = Depends(valid_dish_id), repository: CompositionOfDishRepository = Depends(Provide[Container.composition_of_dish_repository])):    
     return await repository.get_recipe_for_dish(dish.id)
 
 @router.post("/{dish_id}", response_model=EntityCreated)
@@ -54,7 +54,7 @@ async def update_recipe(
 
 @router.delete("/{dish_id}", responses={status.HTTP_200_OK: {"model": Message}, status.HTTP_404_NOT_FOUND: {"model": Message}})
 @inject
-async def remove_recipe_by_dish(dish: Dish = Depends(valid_dish_id), repository: CompositionOfDishRepository = Depends(Provide[Container.composition_of_dish_repository])):
+async def remove_recipe(dish: Dish = Depends(valid_dish_id), repository: CompositionOfDishRepository = Depends(Provide[Container.composition_of_dish_repository])):
     await repository.delete_recipe_of_dish(dish.id)
 
     return JSONResponse(status_code=status.HTTP_200_OK, content={"message": "Recipe for dish successfully removed"})

@@ -45,7 +45,7 @@ async def create_unit_of_measurement(
 
 @router.put("/{id}", responses={status.HTTP_200_OK: {"model": Message}, status.HTTP_404_NOT_FOUND: {"model": Message}})
 @inject
-async def update_product_type(
+async def update_unit_of_measurement(
     item: UpdateUnitOfMeasurementSchema, 
     unit_of_measurement: UnitOfMeasurement = Depends(valid_unit_of_measurement_id), 
     repository: UnitOfMeasurementRepository = Depends(Provide[Container.unit_of_measurement_repository])
@@ -56,7 +56,7 @@ async def update_product_type(
 
 @router.delete("/{id}", responses={status.HTTP_200_OK: {"model": Message}, status.HTTP_404_NOT_FOUND: {"model": Message}})
 @inject
-async def remove_product_type(
+async def remove_unit_of_measurement(
     unit_of_measurement: UnitOfMeasurement = Depends(valid_unit_of_measurement_id), 
     repository: UnitOfMeasurementRepository = Depends(Provide[Container.unit_of_measurement_repository])
 ):    
